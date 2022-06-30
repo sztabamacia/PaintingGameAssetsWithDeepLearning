@@ -21,4 +21,8 @@ This is a code and data repository for the above publication. Feel free to ask a
 }
 ```
 
-Code and data should be uploaded in the coming weeks. 
+## Getting Started
+
+This repository contains the basic steps to reproduce our results. All data related to the Lucy, Sarah and Saulo characters can be found at "./dataset/" and all code is located at the "./research/" folder. All experiments can be reproduced by configuring the train.py script following the directions provided on the article. All generated results are saved to the "./results/" folder and are named by "task_name" and are timestamped for ease of use.
+
+For any help reproducing the results or trying to extend our solution, feel free to contact Ygor directly or use the issue tracker.
