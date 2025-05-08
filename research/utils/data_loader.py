@@ -13,14 +13,14 @@ def make_dataset(X, y, batch_size):
         m = tf.cast(m, dtype=tf.float32)
         return m[..., :s], m[..., s:]
 
-    with tf.device('/:CPU:0'):
-        X = tf.convert_to_tensor(X, dtype=tf.int8)
-        y = tf.convert_to_tensor(y, dtype=tf.int8)
+    # with tf.device('/:CPU:0'):
+    X = tf.convert_to_tensor(X, dtype=tf.int8)
+    y = tf.convert_to_tensor(y, dtype=tf.int8)
 
-        dataset = tf.data.Dataset.from_tensor_slices((X, y))
-        dataset = dataset.shuffle(len(X))
-        dataset = dataset.map(random_flip_augmentation) if type(y) != list else dataset
-        dataset = dataset.batch(batch_size)
+    dataset = tf.data.Dataset.from_tensor_slices((X, y))
+    dataset = dataset.shuffle(len(X))
+    dataset = dataset.map(random_flip_augmentation) if type(y) != list else dataset
+    dataset = dataset.batch(batch_size)
         
     return dataset
 

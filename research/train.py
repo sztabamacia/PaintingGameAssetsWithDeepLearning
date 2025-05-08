@@ -87,8 +87,9 @@ elif loss == 'wfl':
     loss = helper.weighted_focal_loss(y_train)
 
 model.compile(
-    tf.keras.optimizers.RMSprop(learning_rate), loss, 
-    loss_weights=[7/64, 7/64, 7/32, 7/16, 7/8, 7/4, 7/2] if dense > 1 else None)
+    tf.keras.optimizers.RMSprop(learning_rate), 
+    loss
+)
 
 
 # Saves all currently used parameters to disk along with the model to ease experiments tracking
@@ -99,7 +100,7 @@ with open(model_path + model_name + '_args.json', 'w') as f:
 # Function called each epoch to document the learning progress.
 # Each 10 epochs, output classification and regression metrics
 # If "epoch" is a string, dump the algorithms outputs too
-def evaluate_model(epoch, log):
+def evaluate_model(epoch, log, X_test, input_palette, output_palette, model_path, batch_size):
     epoch = epoch + 1 if type(epoch) == int else epoch
     validate = epoch % 10 == 0 if type(epoch) == int else True
     dump = type(epoch) == str
@@ -136,7 +137,7 @@ def evaluate_model(epoch, log):
 
 
 callbacks = [
-    tf.keras.callbacks.ModelCheckpoint(model_path + model_name, save_weights_only=True),
+    tf.keras.callbacks.ModelCheckpoint(model_path + model_name.replace('.h5', '.weights.h5'), save_weights_only=True),
     tf.keras.callbacks.LambdaCallback(on_epoch_end=evaluate_model)
 ]
 
@@ -144,9 +145,9 @@ if epochs > 0:
     history = model.fit(
         make_dataset(X_train, y_train, batch_size),
         validation_data=make_dataset(X_test, y_test, batch_size), 
-        epochs=epochs, batch_size=batch_size, callbacks=callbacks, use_multiprocessing=False)
+        epochs=epochs, batch_size=batch_size, callbacks=callbacks)
     with open(model_path + model_name + '_history.json', 'w') as f:
         json.dump(history.history, f, indent=4)
 
 # Avaliação final do modelo
-evaluate_model('final_results', {})
+evaluate_model('final_results', {}, X_test, input_palette, output_palette, model_path, batch_size)

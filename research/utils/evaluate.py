@@ -81,6 +81,10 @@ def evaL_classification(y, yhat, log, path, bs=32):
     result['report'] = metrics.classification_report(t, p, output_dict=True)
     result['confusion'] = metrics.confusion_matrix(t, p, normalize='true').tolist()
 
+    # filepath: c:\studia\pg\metody_badawcze_w_inf\...\evaluate.py
+    if np.isnan(yhat).any():
+        print("Warning: NaN values found in predictions.")
+    yhat = np.nan_to_num(yhat)
     for i, (k, v) in enumerate(result.items()):
         if k == 'report':
             break

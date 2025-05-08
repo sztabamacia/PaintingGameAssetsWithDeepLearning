@@ -10,6 +10,7 @@ import numpy as np
 def find_similar(X, meta, k=5, allow_same_anim=True):
     preprocessed = tf.keras.applications.vgg16.preprocess_input(X.copy())
     vgg = tf.keras.applications.vgg16.VGG16(include_top=False, pooling='avg')
+    vgg.trainable = False    
     features = vgg.predict(preprocessed, batch_size=128)
     neighbors = NearestNeighbors(n_neighbors=len(X)//5, radius=2, metric='cosine').fit(features)
     indices = neighbors.kneighbors(features)[1][1:,:]

@@ -51,13 +51,14 @@ def class_weights(y, beta=0.9):
     
     return class_weights
 
+# filepath: c:\studia\pg\metody_badawcze_w_inf\...\helper.py
 def focal_loss(alpha=0.25, gamma=2.0):
     def focal_loss_fixed(y_true, y_pred):
+        alpha_t = tf.convert_to_tensor(alpha, dtype=tf.float32) if isinstance(alpha, (list, np.ndarray)) else alpha
         y_pred = tf.clip_by_value(y_pred, 1e-7, 1. - 1e-7)
         loss = -y_true * tf.math.log(y_pred)
-        loss = alpha * tf.math.pow(1 - y_pred, gamma) * loss  # focal loss
+        loss = alpha_t * tf.math.pow(1 - y_pred, gamma) * loss
         return tf.reduce_sum(loss, axis=-1)
-
     return focal_loss_fixed
 
 def weighted_focal_loss(y, beta=0.9, gamma=2.0):

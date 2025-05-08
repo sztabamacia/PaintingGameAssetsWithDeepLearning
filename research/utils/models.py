@@ -19,9 +19,9 @@ def UNet(input, output, n_filters, multipliers=[1,2,4,8], default_activation='re
         """3 Conv-Bn-Relu blocks in sequence and parallel + residual connection"""
         def _operation(flow):
             a = flow
-            b = flow = block(np.round(n_filters / 3), 3, 1)(flow)
-            c = flow = block(np.round(n_filters / 3), 3, 1)(flow)
-            d = flow = block(np.round(n_filters / 3), 3, 1)(flow)
+            b = flow = block(int(np.round(n_filters / 3)), 3, 1)(flow)
+            c = flow = block(int(np.round(n_filters / 3)), 3, 1)(flow)
+            d = flow = block(int(np.round(n_filters / 3)), 3, 1)(flow)
             concat = flow = tf.keras.layers.Concatenate()([b, c, d])
             if concat.shape[-1] != a.shape[-1]:
                 a = block(n_filters, 1, 1)(a)
@@ -83,7 +83,7 @@ def UNet(input, output, n_filters, multipliers=[1,2,4,8], default_activation='re
     downsampled_input = flow if dense else None
     for m in multipliers:
         flow = downsample(n_filters * m)(flow, downsampled_input)
-        downsampled_input = tf.keras.layers.AveragePooling2D()(downsampled_input) if dense else None
+        downsampled_input = tf.keras.layers.AveragePooling2D(pool_size=(2, 2))(downsampled_input) if dense else None        
         down.append(flow)
 
     # Encoder
